@@ -1,5 +1,7 @@
 import { useParams } from "react-router-dom"
 import { useState, useEffect } from "react"
+import styles from "../components/Movie.module.css"
+import home_styles from "./Home.module.css"
 
 function Detail() {
     const [loading, setLoading] = useState(true)
@@ -9,24 +11,38 @@ function Detail() {
         const json = await (
             await fetch(`https://yts.mx/api/v2/movie_details.json?movie_id=${id}`)
         ).json()
+        console.log(json)
         setMovie(json.data.movie)
         setLoading(false)
     };
     useEffect(() => {
         getMovie()
     }, [])
-    return <div>{
-        loading ? <h1>Loading...</h1> :
-            <div key={movie.id}>
-                <h2>{movie.title} ({movie.year})</h2>
-                <img src={movie.large_cover_image} />
-                <p>{movie.description_full}</p>
-                {movie.genres !== null ? <ul>
-                    {movie.genres.map(g => <li key={g}>{g}</li>)}
-                </ul> : null}
-            </div>
-    }
-    </div>
+    return (
+        <div className={home_styles.container}>
+            {loading ?
+                <div className={home_styles.loader}>
+                    <span>Loading...</span>
+                </div> :
+                <div className={styles.movie}>
+                    <img src={movie.large_cover_image} alt={movie.title} className={styles.movie__img} />
+                    <div>
+                        <h2 className={styles.movie__title}>
+                        </h2>
+                        <h3 className={styles.movie__year}>
+                            {movie.year}
+                        </h3>
+                        <p>
+                            {movie.description_full}
+                        </p>
+                        {movie.genres !== null ? <ul className={styles.movie__genres}>
+                            {movie.genres.map(g => <li key={g}>{g}</li>)}
+                        </ul> : null}
+                    </div>
+                </div>
+            }
+        </div>
+    )
 }
 
 export default Detail;
